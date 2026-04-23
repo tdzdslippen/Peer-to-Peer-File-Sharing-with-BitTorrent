@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "p2p-share-dht"
+version = "0.1.0"
+description = "Simplified BitTorrent-style peer-to-peer file sharing with DHT-like lookup"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "rich>=13.7.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0.0",
+]
+
+[project.scripts]
+p2p-peer = "p2p_share.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+addopts = "-q"
