@@ -1,4 +1,4 @@
-from p2p_share.dht import hash_text, make_peer_id
+from p2p_share.domain.dht import hash_text, make_peer_id
 
 
 def test_peer_id_is_stable() -> None:

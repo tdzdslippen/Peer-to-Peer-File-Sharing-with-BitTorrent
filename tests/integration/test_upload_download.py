@@ -4,7 +4,7 @@ import time
 
 import pytest
 
-from p2p_share.peer import PeerNode
+from p2p_share.application.peer import PeerNode
 
 
 def free_port() -> int:

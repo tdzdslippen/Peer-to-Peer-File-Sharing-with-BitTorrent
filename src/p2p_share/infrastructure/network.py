@@ -6,8 +6,8 @@ import struct
 from threading import Event, Thread
 from typing import Any, Callable
 
-from .config import DEFAULT_TIMEOUT_SECONDS
-from .protocol import PeerInfo
+from ..domain.config import DEFAULT_TIMEOUT_SECONDS
+from ..domain.protocol import PeerInfo
 
 
 class NetworkError(Exception):

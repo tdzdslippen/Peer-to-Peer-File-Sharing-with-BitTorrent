@@ -88,7 +88,7 @@ Recommended live scenario:
 - show logs for join, lookup routing, chunk ownership updates, chunk transfers
 - show progress output and reconstructed file
 
-Detailed command sequence is in `docs/demo.md`.
+Detailed command sequence is in `docs/development/demo.md`.
 
 ## 9. Limitations
 

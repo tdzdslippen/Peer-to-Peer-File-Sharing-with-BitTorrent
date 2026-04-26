@@ -7,8 +7,8 @@ from threading import Lock
 
 from rich.progress import BarColumn, Progress, TextColumn, TimeElapsedColumn, TimeRemainingColumn
 
-from .dht import short_id
-from .protocol import FileManifest
+from ..domain.dht import short_id
+from ..domain.protocol import FileManifest
 
 
 @dataclass

@@ -1,4 +1,4 @@
-from p2p_share.metadata import MetadataIndex
+from p2p_share.domain.metadata import MetadataIndex
 
 
 def test_register_and_lookup_file() -> None:
