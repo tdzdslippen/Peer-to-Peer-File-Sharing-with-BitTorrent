@@ -16,7 +16,8 @@ Install dependencies:
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-pip install -e .[dev]
+pip install -r requirements-dev.txt
+pip install -e .
 ```
 
 Create a sample file:

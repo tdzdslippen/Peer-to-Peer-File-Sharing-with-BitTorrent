@@ -1,5 +1,5 @@
-from p2p_share.dht import next_hop_for_key, responsible_peer_for_key, sort_ring
-from p2p_share.protocol import PeerInfo
+from p2p_share.domain.dht import next_hop_for_key, responsible_peer_for_key, sort_ring
+from p2p_share.domain.protocol import PeerInfo
 
 
 PEERS = [

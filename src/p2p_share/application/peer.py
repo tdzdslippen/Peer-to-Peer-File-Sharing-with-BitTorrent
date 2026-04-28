@@ -4,14 +4,14 @@ import base64
 from pathlib import Path
 from typing import Any
 
-from .config import DEFAULT_CHUNK_SIZE, DEFAULT_DATA_ROOT, DEFAULT_ROUTE_TTL
-from .dht import make_peer_id, next_hop_for_key, responsible_peer_for_key, short_id
+from ..domain.config import DEFAULT_CHUNK_SIZE, DEFAULT_DATA_ROOT, DEFAULT_ROUTE_TTL
+from ..domain.dht import make_peer_id, next_hop_for_key, responsible_peer_for_key, short_id
 from .downloader import DownloadManager
-from .logging_utils import EventLogger
-from .membership import MembershipView
-from .metadata import MetadataIndex
-from .network import PeerServer, rpc_call
-from .protocol import (
+from ..infrastructure.logging_utils import EventLogger
+from ..domain.membership import MembershipView
+from ..domain.metadata import MetadataIndex
+from ..infrastructure.network import PeerServer, rpc_call
+from ..domain.protocol import (
     MESSAGE_CHUNK_OWNERS,
     MESSAGE_DOWNLOAD_STATUS,
     MESSAGE_JOIN,
@@ -30,7 +30,7 @@ from .protocol import (
     PeerInfo,
     make_message,
 )
-from .storage import LocalStorage
+from ..domain.storage import LocalStorage
 
 
 class PeerNode:

@@ -1,92 +1,115 @@
-# Project 19 (Variant B): Simplified BitTorrent with DHT-like Peer Discovery
+# Project 19 (Variant B): P2P File Sharing with DHT-like Lookup
 
-A CLI-based peer-to-peer file sharing system for a Distributed Systems and Network Programming course.
+A simplified BitTorrent-style CLI system for Distributed Systems and Network Programming.
 
-The project implements a simplified BitTorrent-style flow:
-- peers join and leave a network
-- files are split into chunks
-- file metadata and chunk ownership are placed on a hash ring
-- chunk owners are resolved through DHT-like lookup and message forwarding
-- peers exchange chunks and reconstruct complete files
-- download progress is visualized in terminal output
+## Quick Links
 
-## Features
+- Documentation: [`docs/`](docs/)
+- Demo scenario: [`docs/development/demo.md`](docs/development/demo.md)
+- Final report: [`docs/reports/final-report.md`](docs/reports/final-report.md)
 
-- Peer startup and TCP server per node
-- Peer join and leave with event logs
-- Membership synchronization using bootstrap and state sync messages
-- DHT-like key placement on a ring using hashed peer IDs and hashed file/chunk IDs
-- Metadata registration for files and chunk ownership
-- Distributed lookup for file manifests and chunk owners
-- Chunk transfer via framed JSON messages and Base64 payloads
-- Integrity checks for chunks and reconstructed files
-- Per-peer progress display during download
-- CLI commands for demo and inspection
+## Project Goals
 
-## Architecture Overview
+- exchange files by chunks between peers
+- use distributed DHT-like metadata lookup (without a central tracker)
+- log join/leave and ownership changes clearly
+- visualize per-peer download progress in terminal
 
-Main modules:
-- `network.py`: framed JSON TCP RPC
-- `protocol.py`: message and schema types
-- `dht.py`: hash ring and ownership mapping
-- `membership.py`: known peers and sync
-- `metadata.py`: file and chunk owner indexes
-- `storage.py`: chunk split/store/reconstruct
-- `peer.py`: node lifecycle and message handlers
-- `downloader.py`: download orchestration and progress
-- `cli.py`: interactive peer shell
+## Architecture Summary
 
-Detailed design is in [docs/architecture.md](docs/architecture.md).
+The codebase is structured into clear layers:
+
+- `domain/` for hashing, ring ownership, metadata, storage, protocol schemas
+- `application/` for peer lifecycle and download orchestration
+- `infrastructure/` for TCP transport and logging adapters
+- `interfaces/` for CLI commands and terminal output
+
+Detailed architecture documents:
+- [`docs/architecture/overview.md`](docs/architecture/overview.md)
+- [`docs/architecture/static-view.md`](docs/architecture/static-view.md)
+- [`docs/architecture/dynamic-view.md`](docs/architecture/dynamic-view.md)
+- [`docs/architecture/deployment-view.md`](docs/architecture/deployment-view.md)
 
 ## Repository Structure
 
 ```text
 .
+├── LICENSE
 ├── README.md
 ├── pyproject.toml
+├── requirements.txt
+├── requirements-dev.txt
 ├── docs
-│   ├── architecture.md
-│   ├── demo.md
-│   ├── limitations.md
-│   ├── protocol.md
-│   ├── report.md
-│   └── team_split.md
+│   ├── architecture
+│   │   ├── deployment-view.md
+│   │   ├── dynamic-view.md
+│   │   ├── overview.md
+│   │   └── static-view.md
+│   ├── assets
+│   │   └── screenshots
+│   │       └── user-flow
+│   │           └── README.md
+│   ├── development
+│   │   ├── demo.md
+│   │   ├── protocol.md
+│   │   └── team-responsibilities.md
+│   ├── quality-assurance
+│   │   └── limitations.md
+│   └── reports
+│       └── final-report.md
 ├── src
 │   └── p2p_share
 │       ├── __init__.py
 │       ├── cli.py
-│       ├── config.py
-│       ├── dht.py
-│       ├── downloader.py
-│       ├── logging_utils.py
-│       ├── membership.py
-│       ├── metadata.py
-│       ├── network.py
-│       ├── peer.py
-│       ├── protocol.py
-│       └── storage.py
+│       ├── application
+│       │   ├── __init__.py
+│       │   ├── downloader.py
+│       │   └── peer.py
+│       ├── domain
+│       │   ├── __init__.py
+│       │   ├── config.py
+│       │   ├── dht.py
+│       │   ├── membership.py
+│       │   ├── metadata.py
+│       │   ├── protocol.py
+│       │   └── storage.py
+│       ├── infrastructure
+│       │   ├── __init__.py
+│       │   ├── logging_utils.py
+│       │   └── network.py
+│       └── interfaces
+│           ├── __init__.py
+│           └── cli.py
 └── tests
-    ├── test_dht.py
-    ├── test_ids.py
-    ├── test_integration_e2e.py
-    ├── test_metadata.py
-    └── test_storage.py
+    ├── integration
+    │   └── test_upload_download.py
+    └── unit
+        ├── test_dht.py
+        ├── test_ids.py
+        ├── test_metadata.py
+        └── test_storage.py
 ```
 
-## Setup
+## Installation
 
-Requirements:
-- Python 3.11+
-
-Install:
+### Option 1: with requirements
 
 ```bash
-python -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate
-pip install -e .[dev]
+pip install -r requirements-dev.txt
+pip install -e .
 ```
 
-## Run Peers
+### Option 2: with pyproject extras
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -e '.[dev]'
+```
+
+## Run
 
 Start peer A:
 
@@ -94,21 +117,19 @@ Start peer A:
 p2p-peer --host 127.0.0.1 --port 9101
 ```
 
-Start peer B and join A:
+Start peer B:
 
 ```bash
 p2p-peer --host 127.0.0.1 --port 9102 --bootstrap 127.0.0.1:9101
 ```
 
-Start peer C and join A:
+Start peer C:
 
 ```bash
 p2p-peer --host 127.0.0.1 --port 9103 --bootstrap 127.0.0.1:9101
 ```
 
-## CLI Commands
-
-Inside a peer shell:
+Core commands in peer shell:
 
 ```text
 help
@@ -125,35 +146,48 @@ leave
 exit
 ```
 
-## Upload and Download Example
-
-On peer A:
-
-```text
-upload ./sample.txt
-```
-
-Copy printed `file_id`.
-
-On peer C:
-
-```text
-download <file_id> ./downloaded_sample.txt
-```
-
-Then inspect chunk ownership and progress:
-
-```text
-chunks <file_id>
-progress
-```
-
-## Run Tests
+## Tests
 
 ```bash
 pytest
 ```
 
-## Demo Walkthrough
+## Team
 
-A full 3-peer live demo script is documented in [docs/demo.md](docs/demo.md).
+Contributors:
+- d.khasanshin@innopolis.university
+- r.nasibullin@innopolis.university
+- ro.ivanov@innopolis.university
+- n.selezenev@innopolis.university
+- ars.laptev@innopolis.university
+
+Branch-to-owner mapping:
+- Branch 1: ars.laptev@innopolis.university
+- Branch 2: d.khasanshin@innopolis.university
+- Branch 3: r.nasibullin@innopolis.university
+- Branch 4: n.selezenev@innopolis.university
+- Branch 5: ro.ivanov@innopolis.university
+
+Functional split details are in [`docs/development/team-responsibilities.md`](docs/development/team-responsibilities.md).
+
+## Screenshots
+
+The repository keeps only user-flow screenshots used in the video demo flow:
+- [`docs/assets/screenshots/user-flow/`](docs/assets/screenshots/user-flow/)
+
+## Support
+
+For project questions, contact the team at:
+- d.khasanshin@innopolis.university
+- r.nasibullin@innopolis.university
+- ro.ivanov@innopolis.university
+- n.selezenev@innopolis.university
+- ars.laptev@innopolis.university
+
+## Issues
+
+Use the **Issues** tab of the current repository.
+
+## License
+
+This project is licensed under the MIT License. See [`LICENSE`](LICENSE).

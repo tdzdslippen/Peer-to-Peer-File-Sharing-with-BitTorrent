@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from p2p_share.storage import LocalStorage
+from p2p_share.domain.storage import LocalStorage
 
 
 def test_split_and_reconstruct(tmp_path: Path) -> None:
