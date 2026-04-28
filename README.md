@@ -1,4 +1,4 @@
-# Project 19 (Variant B): P2P File Sharing with DHT-like Lookup
+# Project 19 (Variant B): Peer-to-Peer File Sharing with DHT-like Lookup
 
 A simplified BitTorrent-style CLI system for Distributed Systems and Network Programming.
 
@@ -13,22 +13,41 @@ A simplified BitTorrent-style CLI system for Distributed Systems and Network Pro
 - exchange files by chunks between peers
 - use distributed DHT-like metadata lookup (without a central tracker)
 - log join/leave and ownership changes clearly
-- visualize per-peer download progress in terminal
+- visualize per-peer download progress in the terminal
+
+## Implemented Requirements
+
+This implementation covers the main validation points of the assignment:
+
+- complete file upload and download through chunk exchange
+- peer join/leave logging
+- chunk ownership registration and updates
+- DHT-like lookup for file and chunk metadata
+- terminal-based download progress visualization
+- end-to-end integration test with multiple peers
 
 ## Architecture Summary
 
-The codebase is structured into clear layers:
+The project uses a layered structure:
 
-- `domain/` for hashing, ring ownership, metadata, storage, protocol schemas
-- `application/` for peer lifecycle and download orchestration
-- `infrastructure/` for TCP transport and logging adapters
-- `interfaces/` for CLI commands and terminal output
+- `domain/` contains core logic: hashing, DHT ring ownership, metadata, storage, and protocol schemas
+- `application/` coordinates peer lifecycle and download orchestration
+- `infrastructure/` provides TCP transport and logging adapters
+- `interfaces/` contains CLI commands and terminal output
 
-Detailed architecture documents:
-- [`docs/architecture/overview.md`](docs/architecture/overview.md)
-- [`docs/architecture/static-view.md`](docs/architecture/static-view.md)
-- [`docs/architecture/dynamic-view.md`](docs/architecture/dynamic-view.md)
-- [`docs/architecture/deployment-view.md`](docs/architecture/deployment-view.md)
+This separation keeps networking, business logic, storage, and user interaction independent enough to test and explain during the demo.
+
+## Documentation
+
+- Architecture overview: [`docs/architecture/overview.md`](docs/architecture/overview.md)
+- Static view: [`docs/architecture/static-view.md`](docs/architecture/static-view.md)
+- Dynamic view: [`docs/architecture/dynamic-view.md`](docs/architecture/dynamic-view.md)
+- Deployment view: [`docs/architecture/deployment-view.md`](docs/architecture/deployment-view.md)
+- Protocol: [`docs/development/protocol.md`](docs/development/protocol.md)
+- Demo scenario: [`docs/development/demo.md`](docs/development/demo.md)
+- Team responsibilities: [`docs/development/team-responsibilities.md`](docs/development/team-responsibilities.md)
+- Limitations: [`docs/quality-assurance/limitations.md`](docs/quality-assurance/limitations.md)
+- Final report: [`docs/reports/final-report.md`](docs/reports/final-report.md)
 
 ## Repository Structure
 
@@ -145,10 +164,21 @@ state
 leave
 exit
 ```
+## Example Flow
+
+1. Start peer A.
+2. Start peer B and peer C using peer A as bootstrap.
+3. Upload a file from peer A.
+4. Copy the printed `file_id`.
+5. Download the file from peer C.
+6. Use `chunks`, `progress`, and `state` to inspect ownership and download status.
 
 ## Tests
 
+Install development dependencies first:
+
 ```bash
+pip install -e '.[dev]'
 pytest
 ```
 
@@ -158,14 +188,13 @@ The project was implemented by five contributors, with responsibilities split by
 
 | Contributor | Main responsibility | Contribution |
 |---|---|---|
-| d.khasanshin@innopolis.university | DHT-like lookup and membership | Implemented peer join/leave behavior, membership synchronization, ring-based lookup routing, and peer state handling. |
+| d.khasanshin@innopolis.university | DHT-like lookup and membership | Implemented peer join/leave behavior, membership synchronization, ring-based lookup routing, and peer state handling. Created the basis for the README. |
 | r.nasibullin@innopolis.university | Chunk storage and metadata | Implemented file splitting and reconstruction, local chunk storage, manifest handling, chunk ownership metadata, and integrity checks. |
-| ro.ivanov@innopolis.university | Integration, tests, and final documentation | Prepared repository-level integration work, end-to-end upload/download tests, packaging configuration, README updates, and final report documentation. |
-| n.selezenev@innopolis.university | Download orchestration and CLI demo flow | Worked on the download flow, terminal progress visibility, demo commands, and runtime behavior needed for the live user scenario. |
-| ars.laptev@innopolis.university | Networking and protocol | Implemented the TCP-based message transport, JSON framing, protocol message formats, shared configuration, and protocol documentation. |
+| ro.ivanov@innopolis.university | Integration, tests, and repository cleanup | Prepared integration work, end-to-end upload/download tests, packaging configuration, repository structure cleanup. |
+| n.selezenev@innopolis.university | Download orchestration and CLI demo flow | Worked on the download flow, terminal progress visibility, demo commands, and runtime behavior needed for the live user scenario. Updated the final report documentation. |
+| ars.laptev@innopolis.university | Networking, protocol, and final documentation | Implemented the TCP-based message transport, JSON framing, protocol message formats, shared configuration, protocol documentation, README updates and final report documentation. |
 
 More detailed implementation notes and functional split details are available in [`docs/development/team-responsibilities.md`](docs/development/team-responsibilities.md).
-
 ## Screenshots
 
 The repository keeps only user-flow screenshots used in the video demo flow:
