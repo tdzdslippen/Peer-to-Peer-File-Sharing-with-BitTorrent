@@ -6,8 +6,11 @@ from typing import Any
 
 from ..domain.config import DEFAULT_CHUNK_SIZE, DEFAULT_DATA_ROOT, DEFAULT_ROUTE_TTL
 from ..domain.dht import make_peer_id, next_hop_for_key, responsible_peer_for_key, short_id
+from .downloader import DownloadManager
+from ..infrastructure.logging_utils import EventLogger
 from ..domain.membership import MembershipView
 from ..domain.metadata import MetadataIndex
+from ..infrastructure.network import PeerServer, rpc_call
 from ..domain.protocol import (
     MESSAGE_CHUNK_OWNERS,
     MESSAGE_DOWNLOAD_STATUS,
@@ -28,9 +31,6 @@ from ..domain.protocol import (
     make_message,
 )
 from ..domain.storage import LocalStorage
-from ..infrastructure.logging_utils import EventLogger
-from ..infrastructure.network import PeerServer, rpc_call
-from .downloader import DownloadManager
 
 
 class PeerNode:
@@ -63,6 +63,7 @@ class PeerNode:
         self._server.start()
         self._running = True
         self.logger.info("peer_started", peer=self.self_info.address, peer_id=short_id(self.peer_id))
+        self._rebroadcast_local_state()
 
     def stop(self, announce_leave: bool = True) -> None:
         if not self._running:
@@ -87,6 +88,7 @@ class PeerNode:
         self._broadcast(announce)
         sync = make_message(MESSAGE_STATE_SYNC, peers=self.membership.snapshot(include_self=True))
         self._broadcast(sync)
+        self._rebroadcast_local_state()
         self.logger.info("peer_joined_network", peer=self.self_info.address, via=f"{host}:{port}")
 
     def upload_file(self, file_path: Path) -> FileManifest:
@@ -178,6 +180,26 @@ class PeerNode:
             "downloads": self.downloader.snapshot(),
         }
 
+    def _local_manifests(self) -> list[FileManifest]:
+        manifests: list[FileManifest] = []
+        for file_id in self.storage.list_manifest_ids():
+            try:
+                manifests.append(self.storage.load_manifest(file_id))
+            except Exception as exc:
+                self.logger.warn("manifest_load_failed", file_id=file_id, error=str(exc))
+        return manifests
+
+    def _rebroadcast_local_state(self) -> None:
+        owner = self.self_info.to_dict()
+        for manifest in self._local_manifests():
+            try:
+                self.register_file_manifest(manifest.to_dict())
+                for chunk in manifest.chunks:
+                    if self.storage.has_chunk(chunk.chunk_id):
+                        self.register_chunk_owner(chunk.chunk_id, owner)
+            except Exception as exc:
+                self.logger.warn("state_republish_failed", file_id=manifest.file_id, error=str(exc))
+
     def _handle_message(self, message: dict[str, Any]) -> dict[str, Any]:
         message_type = message.get("type")
         handlers: dict[str, Any] = {
@@ -205,18 +227,21 @@ class PeerNode:
         peer = PeerInfo.from_dict(message["peer"])
         if self.membership.add_peer(peer):
             self.logger.info("peer_joined", peer=peer.address, peer_id=short_id(peer.peer_id))
+            self._rebroadcast_local_state()
         return {"status": "ok", "type": MESSAGE_JOIN_ACK, "peers": self.membership.snapshot(include_self=True)}
 
     def _on_peer_announce(self, message: dict[str, Any]) -> dict[str, Any]:
         peer = PeerInfo.from_dict(message["peer"])
         if self.membership.add_peer(peer):
             self.logger.info("peer_joined", peer=peer.address, peer_id=short_id(peer.peer_id))
+            self._rebroadcast_local_state()
         return {"status": "ok"}
 
     def _on_leave(self, message: dict[str, Any]) -> dict[str, Any]:
         peer = PeerInfo.from_dict(message["peer"])
         if self.membership.remove_peer(peer.peer_id):
             self.logger.info("peer_left", peer=peer.address, peer_id=short_id(peer.peer_id))
+            self._rebroadcast_local_state()
         return {"status": "ok"}
 
     def _on_ping(self, _: dict[str, Any]) -> dict[str, Any]:
@@ -227,6 +252,8 @@ class PeerNode:
         added = self.membership.merge_peers(incoming)
         for peer in added:
             self.logger.info("peer_discovered", peer=peer.address, peer_id=short_id(peer.peer_id))
+        if added:
+            self._rebroadcast_local_state()
         return {"status": "ok", "added": len(added)}
 
     def _on_register_file(self, message: dict[str, Any]) -> dict[str, Any]:
