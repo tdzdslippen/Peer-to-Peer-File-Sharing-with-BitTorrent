@@ -5,9 +5,8 @@ A simplified BitTorrent-style CLI system for Distributed Systems and Network Pro
 ## Quick Links
 
 - Documentation: [`docs/`](docs/)
-- Demo scenario: [`docs/development/demo.md`](docs/development/demo.md)
-- Final report: [`docs/reports/final-report.md`](docs/reports/final-report.md)
-
+- Demo video: [p2p-peer --host <HOST_C_IP> --port 9103 --bootstrap <HOST_A_IP>:9101]
+  
 ## Project Goals
 
 - exchange files by chunks between peers
