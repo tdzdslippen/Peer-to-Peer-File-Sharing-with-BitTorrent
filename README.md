@@ -188,7 +188,7 @@ The project was implemented by five contributors, with responsibilities split by
 
 | Contributor | Main responsibility | Contribution |
 |---|---|---|
-| d.khasanshin@innopolis.university | DHT-like lookup and membership | Implemented peer join/leave behavior, membership synchronization, ring-based lookup routing, and peer state handling. Created the basis for the README. |
+| d.khasanshin@innopolis.university | DHT-like lookup and membership | Implemented peer join/leave behavior, membership synchronization, ring-based lookup routing, and peer state handling. Created the basis for the README. Demonstration video editing |
 | r.nasibullin@innopolis.university | Chunk storage and metadata | Implemented file splitting and reconstruction, local chunk storage, manifest handling, chunk ownership metadata, and integrity checks. |
 | ro.ivanov@innopolis.university | Integration, tests, and repository cleanup | Prepared integration work, end-to-end upload/download tests, packaging configuration, repository structure cleanup. |
 | n.selezenev@innopolis.university | Download orchestration and CLI demo flow | Worked on the download flow, terminal progress visibility, demo commands, and runtime behavior needed for the live user scenario. Updated the final report documentation. |
