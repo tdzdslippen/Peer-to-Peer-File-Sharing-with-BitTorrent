@@ -5,7 +5,7 @@ A simplified BitTorrent-style CLI system for Distributed Systems and Network Pro
 ## Quick Links
 
 - Documentation: [`docs/`](docs/)
-- Demo video: [Yandex Disk](https://disk.yandex.ru/i/ShbktQh7EiTGTA)]
+- Demo video: [Yandex Disk](https://disk.yandex.ru/i/ShbktQh7EiTGTA)
   
 ## Project Goals
 
