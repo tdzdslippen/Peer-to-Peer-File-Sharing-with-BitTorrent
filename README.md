@@ -130,6 +130,8 @@ pip install -e '.[dev]'
 
 ## Run
 
+### Option 1: Local (single machine)
+
 Start peer A:
 
 ```bash
@@ -146,6 +148,26 @@ Start peer C:
 
 ```bash
 p2p-peer --host 127.0.0.1 --port 9103 --bootstrap 127.0.0.1:9101
+```
+
+### Option 2: Multiple hosts in one LAN
+
+On host A (bootstrap node):
+
+```
+p2p-peer --host <HOST_A_IP> --port 9101
+```
+
+On host B:
+
+```
+p2p-peer --host <HOST_B_IP> --port 9102 --bootstrap <HOST_A_IP>:9101
+```
+
+On host C:
+
+```
+p2p-peer --host <HOST_C_IP> --port 9103 --bootstrap <HOST_A_IP>:9101
 ```
 
 Core commands in peer shell:
