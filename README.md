@@ -5,7 +5,7 @@ A simplified BitTorrent-style CLI system for Distributed Systems and Network Pro
 ## Quick Links
 
 - Documentation: [`docs/`](docs/)
-- Demo video: [p2p-peer --host <HOST_C_IP> --port 9103 --bootstrap <HOST_A_IP>:9101]
+- Demo video: [Yandex Disk](https://disk.yandex.ru/i/ShbktQh7EiTGTA)]
   
 ## Project Goals
 
