@@ -152,41 +152,24 @@ exit
 pytest
 ```
 
-## Team
+## Team Contributions
 
-Contributors:
-- d.khasanshin@innopolis.university
-- r.nasibullin@innopolis.university
-- ro.ivanov@innopolis.university
-- n.selezenev@innopolis.university
-- ars.laptev@innopolis.university
+The project was implemented by five contributors, with responsibilities split by feature area.
 
-Branch-to-owner mapping:
-- Branch 1: ars.laptev@innopolis.university
-- Branch 2: d.khasanshin@innopolis.university
-- Branch 3: r.nasibullin@innopolis.university
-- Branch 4: n.selezenev@innopolis.university
-- Branch 5: ro.ivanov@innopolis.university
+| Contributor | Main responsibility | Contribution |
+|---|---|---|
+| d.khasanshin@innopolis.university | DHT-like lookup and membership | Implemented peer join/leave behavior, membership synchronization, ring-based lookup routing, and peer state handling. |
+| r.nasibullin@innopolis.university | Chunk storage and metadata | Implemented file splitting and reconstruction, local chunk storage, manifest handling, chunk ownership metadata, and integrity checks. |
+| ro.ivanov@innopolis.university | Integration, tests, and final documentation | Prepared repository-level integration work, end-to-end upload/download tests, packaging configuration, README updates, and final report documentation. |
+| n.selezenev@innopolis.university | Download orchestration and CLI demo flow | Worked on the download flow, terminal progress visibility, demo commands, and runtime behavior needed for the live user scenario. |
+| ars.laptev@innopolis.university | Networking and protocol | Implemented the TCP-based message transport, JSON framing, protocol message formats, shared configuration, and protocol documentation. |
 
-Functional split details are in [`docs/development/team-responsibilities.md`](docs/development/team-responsibilities.md).
+More detailed implementation notes and functional split details are available in [`docs/development/team-responsibilities.md`](docs/development/team-responsibilities.md).
 
 ## Screenshots
 
 The repository keeps only user-flow screenshots used in the video demo flow:
 - [`docs/assets/screenshots/user-flow/`](docs/assets/screenshots/user-flow/)
-
-## Support
-
-For project questions, contact the team at:
-- d.khasanshin@innopolis.university
-- r.nasibullin@innopolis.university
-- ro.ivanov@innopolis.university
-- n.selezenev@innopolis.university
-- ars.laptev@innopolis.university
-
-## Issues
-
-Use the **Issues** tab of the current repository.
 
 ## License
 
